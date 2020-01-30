@@ -1,0 +1,32 @@
+.section-top-bg {
+  position: relative;
+  background-image: url("./assets/img/w-bg.jpg");
+  width: 100%;
+  min-height: 100vh;
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  padding: 25px;
+  //   display: flex;
+  //   flex-direction: column;
+  //   justify-content: center;
+
+  &::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0%;
+    left: 0%;
+    background-color: rgba(0, 0, 0, 0);
+    z-index: 1;
+  }
+
+  > section {
+    position: relative;
+    z-index: 10;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 1200px;
+  }
+}

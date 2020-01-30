@@ -1,0 +1,153 @@
+.current-weather-wrapper {
+  margin-top: 10vh;
+  display: flex;
+  flex-wrap: wrap-reverse;
+
+  > div {
+    flex: 1 1 0%;
+
+    @media (max-width: 768px) {
+      flex: 0 0 100%;
+    }
+  }
+
+  * {
+    color: #ffffff;
+  }
+
+  > .current-weather-area {
+    > .weather-description {
+      font-size: 2rem;
+
+      &:first-letter {
+        text-transform: uppercase;
+      }
+
+      @media (max-width: 768px) {
+        font-size: 1.5rem;
+        margin-top: 2rem;
+      }
+    }
+  }
+
+  .city-unavailable {
+    font-size: 2.5rem;
+  }
+
+  @media (max-width: 767px) {
+    margin-top: 5vh;
+  }
+}
+
+.temp-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+
+  > div {
+    @media (max-width: 360px) {
+      flex: 0 0 100%;
+    }
+  }
+
+  > .weather-icon {
+    @media (min-width: 361px) {
+      margin-right: 2rem;
+    }
+
+    > img {
+      max-width: 150px;
+
+      @media (max-width: 767px) {
+        max-width: 125px;
+      }
+    }
+  }
+
+  > .weather-current-temp {
+    font-size: 4rem;
+
+    @media (max-width: 767px) {
+      font-size: 3rem;
+    }
+  }
+}
+
+.current-city-area {
+  max-width: min-content;
+
+  > .current-city {
+    font-size: 3rem;
+    text-align: center;
+    width: max-content;
+
+    > .current-city-country {
+      font-size: 1.5rem;
+      margin-left: 0.5rem;
+    }
+  }
+
+  @media (max-width: 767px) {
+    > .current-city {
+      font-size: 2.5rem;
+    }
+  }
+}
+
+.weather-other-details {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 2rem;
+
+  > div {
+    &:not(:last-child) {
+      margin-right: 1.5rem;
+    }
+
+    font-size: 1.5rem;
+
+    @media (max-width: 767px) {
+      &:not(:last-child) {
+        margin-right: 1rem;
+      }
+      font-size: 1rem;
+    }
+  }
+
+  .weather-other-details-text {
+    margin-right: 0.5rem;
+    font-weight: bold;
+  }
+}
+
+.weather-date-time {
+  > .last-fetch-time-text {
+    margin-top: 2rem;
+    margin-bottom: 0;
+    opacity: 0.4;
+  }
+
+  > .weather-time {
+    font-size: 1.5rem;
+  }
+
+  > .weather-date {
+    font-size: 2rem;
+  }
+
+  @media (max-width: 767px) {
+    > .last-fetch-time-text {
+      font-size: 0.9rem;
+      margin-top: 4rem;
+    }
+
+    > .weather-time {
+      font-size: 1.25rem;
+    }
+
+    > .weather-date {
+      font-size: 1.5rem;
+    }
+  }
+}
