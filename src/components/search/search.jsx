@@ -17,22 +17,28 @@ class Search extends Component {
 
   render() {
     return (
-      <div className="search-area">
-        <form onSubmit={this.handleSearchFormSubmit} className="form-inline my-2 my-lg-0">
-          <input
-            className="form-control mr-sm-2"
-            type="text"
-            placeholder="Enter city name"
-            aria-label="Search"
-            ref={searchText => {
-              this.searchText = searchText;
-            }}
-            required
-          />
-          <button className="btn seach-icon">
-            <span className="sr-only">Search</span>
-          </button>
-        </form>
+      <div className="container">
+        <div className="row">
+          <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+            <div className="search-area">
+              <form onSubmit={this.handleSearchFormSubmit} className="form-inline my-2 my-lg-0">
+                <input
+                  className="form-control mr-sm-2"
+                  type="text"
+                  placeholder="Enter city name"
+                  aria-label="Search"
+                  ref={searchText => {
+                    this.searchText = searchText;
+                  }}
+                  required
+                />
+                <button className="btn seach-icon">
+                  <span className="sr-only">Search</span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

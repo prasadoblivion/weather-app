@@ -1,153 +1,268 @@
 .current-weather-wrapper {
   margin-top: 10vh;
-  display: flex;
-  flex-wrap: wrap-reverse;
-
-  > div {
-    flex: 1 1 0%;
-
-    @media (max-width: 768px) {
-      flex: 0 0 100%;
-    }
-  }
-
-  * {
-    color: #ffffff;
-  }
-
-  > .current-weather-area {
-    > .weather-description {
-      font-size: 2rem;
-
-      &:first-letter {
-        text-transform: uppercase;
-      }
-
-      @media (max-width: 768px) {
-        font-size: 1.5rem;
-        margin-top: 2rem;
-      }
-    }
-  }
-
-  .city-unavailable {
-    font-size: 2.5rem;
-  }
 
   @media (max-width: 767px) {
     margin-top: 5vh;
   }
-}
 
-.temp-container {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-
-  > div {
-    @media (max-width: 360px) {
-      flex: 0 0 100%;
-    }
-  }
-
-  > .weather-icon {
-    @media (min-width: 361px) {
-      margin-right: 2rem;
-    }
-
-    > img {
-      max-width: 150px;
-
-      @media (max-width: 767px) {
-        max-width: 125px;
-      }
-    }
-  }
-
-  > .weather-current-temp {
-    font-size: 4rem;
-
-    @media (max-width: 767px) {
-      font-size: 3rem;
-    }
-  }
-}
-
-.current-city-area {
-  max-width: min-content;
-
-  > .current-city {
+  .city-unavailable {
     font-size: 3rem;
-    text-align: center;
-    width: max-content;
+    color: #ffffff;
+  }
+}
 
-    > .current-city-country {
+.current-weather-container {
+  * {
+    color: #ffffff;
+  }
+
+  .city-name {
+    font-size: 3rem;
+
+    .country-code {
       font-size: 1.5rem;
       margin-left: 0.5rem;
     }
   }
 
-  @media (max-width: 767px) {
-    > .current-city {
-      font-size: 2.5rem;
+  .date {
+    font-size: 1.5rem;
+  }
+
+  .temp-conatiner {
+    align-items: center;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+
+    .weather-icon {
+      font-size: 5rem;
+      padding-right: 0px;
+      max-width: 150px;
+    }
+
+    .temp-text {
+      font-size: 4rem;
+    }
+
+    @media (max-width: 767px) {
+      .weather-icon {
+        font-size: 4rem;
+        padding-right: 0px;
+        max-width: 125px;
+      }
+
+      .temp-text {
+        font-size: 2.5rem;
+      }
     }
   }
-}
 
-.weather-other-details {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  margin-top: 2rem;
+  .weather-desc {
+    font-size: 1.5rem;
+  }
 
-  > div {
+  .weather-other-details-conatiner {
+    margin: 1.5rem 0;
+
+    // @media (max-width: 767px) {
+    //   &:last-child {
+    //     margin-top: 0;
+    //   }
+    // }
+  }
+
+  .weather-other-details {
+    font-size: 1.2rem;
+
     &:not(:last-child) {
       margin-right: 1.5rem;
     }
 
-    font-size: 1.5rem;
-
-    @media (max-width: 767px) {
-      &:not(:last-child) {
-        margin-right: 1rem;
-      }
-      font-size: 1rem;
+    .weather-other-details-text {
+      font-weight: bold;
+      margin-right: 0.5rem;
     }
   }
 
-  .weather-other-details-text {
-    margin-right: 0.5rem;
-    font-weight: bold;
-  }
-}
-
-.weather-date-time {
-  > .last-fetch-time-text {
-    margin-top: 2rem;
-    margin-bottom: 0;
+  .last-updated-text {
     opacity: 0.4;
+    margin-top: 2.5rem;
   }
 
-  > .weather-time {
-    font-size: 1.5rem;
-  }
-
-  > .weather-date {
+  .refresh-btn {
     font-size: 2rem;
+    padding: 0px;
+    line-height: 1;
+    margin-left: 1.5rem;
   }
+}
 
-  @media (max-width: 767px) {
-    > .last-fetch-time-text {
-      font-size: 0.9rem;
-      margin-top: 4rem;
-    }
+.card {
+  &.other-weather-info {
+    background-color: transparent !important;
+    max-width: 300px;
+    margin-top: 1.15rem;
 
-    > .weather-time {
-      font-size: 1.25rem;
-    }
+    .list-group-item {
+      background-color: rgba(255, 255, 255, 0.2);
+      font-size: 1.2rem;
 
-    > .weather-date {
-      font-size: 1.5rem;
+      > .wi {
+        &:first-child {
+          margin-right: 1rem;
+          min-width: 25px;
+        }
+      }
     }
   }
 }
+
+// .current-weather-wrapper {
+//   margin-top: 10vh;
+//   display: flex;
+//   flex-wrap: wrap-reverse;
+
+//   > div {
+//     flex: 1 1 0%;
+
+//     @media (max-width: 768px) {
+//       flex: 0 0 100%;
+//     }
+//   }
+
+//   > .current-weather-area {
+//     > .weather-description {
+//       font-size: 2rem;
+
+//       &:first-letter {
+//         text-transform: uppercase;
+//       }
+
+//       @media (max-width: 768px) {
+//         font-size: 1.5rem;
+//         margin-top: 2rem;
+//       }
+//     }
+//   }
+
+//   .city-unavailable {
+//     font-size: 2.5rem;
+//   }
+
+//   @media (max-width: 767px) {
+//     margin-top: 5vh;
+//   }
+// }
+
+// .temp-container {
+//   display: flex;
+//   flex-wrap: wrap;
+//   align-items: center;
+
+//   > div {
+//     @media (max-width: 360px) {
+//       flex: 0 0 100%;
+//     }
+//   }
+
+//   > .weather-icon {
+//     @media (min-width: 361px) {
+//       margin-right: 2rem;
+//     }
+
+//     > img {
+//       max-width: 150px;
+
+//       @media (max-width: 767px) {
+//         max-width: 125px;
+//       }
+//     }
+//   }
+
+//   > .weather-current-temp {
+//     font-size: 4rem;
+
+//     @media (max-width: 767px) {
+//       font-size: 3rem;
+//     }
+//   }
+// }
+
+// .current-city-area {
+//   max-width: min-content;
+
+//   > .current-city {
+//     font-size: 3rem;
+//     text-align: center;
+//     width: max-content;
+
+//     > .current-city-country {
+//       font-size: 1.5rem;
+//       margin-left: 0.5rem;
+//     }
+//   }
+
+//   @media (max-width: 767px) {
+//     > .current-city {
+//       font-size: 2.5rem;
+//     }
+//   }
+// }
+
+// .weather-other-details {
+//   display: flex;
+//   flex-wrap: wrap;
+//   align-items: center;
+//   margin-top: 2rem;
+
+//   > div {
+//     &:not(:last-child) {
+//       margin-right: 1.5rem;
+//     }
+
+//     font-size: 1.5rem;
+
+//     @media (max-width: 767px) {
+//       &:not(:last-child) {
+//         margin-right: 1rem;
+//       }
+//       font-size: 1rem;
+//     }
+//   }
+
+//   .weather-other-details-text {
+//     margin-right: 0.5rem;
+//     font-weight: bold;
+//   }
+// }
+
+// .weather-date-time {
+//   > .last-fetch-time-text {
+//     margin-top: 2rem;
+//     margin-bottom: 0;
+//     opacity: 0.4;
+//   }
+
+//   > .weather-time {
+//     font-size: 1.5rem;
+//   }
+
+//   > .weather-date {
+//     font-size: 2rem;
+//   }
+
+//   @media (max-width: 767px) {
+//     > .last-fetch-time-text {
+//       font-size: 0.9rem;
+//       margin-top: 4rem;
+//     }
+
+//     > .weather-time {
+//       font-size: 1.25rem;
+//     }
+
+//     > .weather-date {
+//       font-size: 1.5rem;
+//     }
+//   }
+// }

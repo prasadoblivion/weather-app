@@ -2,6 +2,7 @@ import React from "react";
 import "./App.scss";
 import Search from "./components/search/search";
 import CurrentWeather from "./components/currentWeather/currentWeather";
+import "./windCSS/css/weather-icons.min.css"; //https://erikflowers.github.io/weather-icons/
 
 function App() {
   return (
