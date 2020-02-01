@@ -13,7 +13,7 @@ const weatherDataReducer = (state = initialWeatherData, action) => {
   }
 
   if (action.type === "CURRENT_WEATHER_DATA_FETCHED") {
-    return [{ city: state[0].city, weatherData: { ...action.payload }, tempFormat: state[0].tempFormat, showLoader: false }];
+    return [{ city: action.payload.name, weatherData: { ...action.payload }, tempFormat: state[0].tempFormat, showLoader: false }];
   }
 
   if (action.type === "SHOW_LOADER") {

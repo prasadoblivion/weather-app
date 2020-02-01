@@ -4,53 +4,79 @@ import axios from "axios";
 import "./currentWeather.scss";
 
 class CurrentWeather extends Component {
-  geoFindLocation(tempFormat, api) {
+  geoFindLocation = (tempFormat, city) => {
     const success = position => {
       const latitude = position.coords.latitude;
       const longitude = position.coords.longitude;
 
-      const api = "https://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longitude + "&APPID=da7a1729e53b85f62484fe90209713db&units=" + tempFormat;
+      const apiURL = "https://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longitude + "&APPID=da7a1729e53b85f62484fe90209713db&units=" + tempFormat;
 
-      axios.get(api, { validateStatus: false }).then(response => {
+      axios.get(apiURL, { validateStatus: false }).then(response => {
         this.props.onCurrentWeatherFetched(response.data);
       });
     };
 
     const error = () => {
-      //failed to get location
-      axios.get(api, { validateStatus: false }).then(response => {
-        this.props.onCurrentWeatherFetched(response.data);
-      });
+      //failed to get location using geolocation api
+      //then fetch location using IP
+
+      axios.get("http://ip-api.com/json", { validateStatus: false }).then(
+        response => {
+          const apiURL = "https://api.openweathermap.org/data/2.5/weather?lat=" + response.data.lat + "&lon=" + response.data.lon + "&APPID=da7a1729e53b85f62484fe90209713db&units=" + tempFormat;
+
+          axios.get(apiURL, { validateStatus: false }).then(response => {
+            this.props.onCurrentWeatherFetched(response.data);
+          });
+        },
+        () => {
+          const apiURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=da7a1729e53b85f62484fe90209713db&units=" + tempFormat;
+
+          axios.get(apiURL, { validateStatus: false }).then(response => {
+            this.props.onCurrentWeatherFetched(response.data);
+          });
+        }
+      );
     };
 
     if (!navigator.geolocation) {
       //geolocation not supported
-      axios.get(api, { validateStatus: false }).then(response => {
-        this.props.onCurrentWeatherFetched(response.data);
-      });
+      //then fetch location using IP
+
+      axios.get("http://ip-api.com/json", { validateStatus: false }).then(
+        response => {
+          const apiURL = "https://api.openweathermap.org/data/2.5/weather?lat=" + response.data.lat + "&lon=" + response.data.lon + "&APPID=da7a1729e53b85f62484fe90209713db&units=" + tempFormat;
+
+          axios.get(apiURL, { validateStatus: false }).then(response => {
+            this.props.onCurrentWeatherFetched(response.data);
+          });
+        },
+        () => {
+          const apiURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=" + process.env.REACT_APP_OPEN_WEATHER_API_KEY + "&units=" + tempFormat;
+
+          axios.get(apiURL, { validateStatus: false }).then(response => {
+            this.props.onCurrentWeatherFetched(response.data);
+          });
+        }
+      );
     } else {
       navigator.geolocation.getCurrentPosition(success, error);
     }
-  }
+  };
 
   componentDidMount() {
     this.props.showLoader();
+
     const tempFormat = this.props.tempFormat;
     const city = this.props.city;
-    const api = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=da7a1729e53b85f62484fe90209713db&units=" + tempFormat;
 
-    this.geoFindLocation(tempFormat, api);
-
-    // axios.get(api, { validateStatus: false }).then(response => {
-    //   this.props.onCurrentWeatherFetched(response.data);
-    // });
+    this.geoFindLocation(tempFormat, city);
   }
 
   handleRefreshBtnClick = () => {
     this.props.showLoader();
     const tempFormat = this.props.tempFormat;
     const city = this.props.city;
-    const api = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=da7a1729e53b85f62484fe90209713db&units=" + tempFormat;
+    const api = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=" + process.env.REACT_APP_OPEN_WEATHER_API_KEY + "&units=" + tempFormat;
     axios.get(api, { validateStatus: false }).then(response => {
       this.props.onCurrentWeatherFetched(response.data);
     });
@@ -62,7 +88,7 @@ class CurrentWeather extends Component {
       this.props.showLoader();
       const tempFormat = this.props.tempFormat;
       const city = this.props.city;
-      const api = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=da7a1729e53b85f62484fe90209713db&units=" + tempFormat;
+      const api = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=" + process.env.REACT_APP_OPEN_WEATHER_API_KEY + "&units=" + tempFormat;
       axios.get(api, { validateStatus: false }).then(response => {
         this.props.onCurrentWeatherFetched(response.data);
       });
@@ -212,15 +238,27 @@ class CurrentWeather extends Component {
         </div>
       );
     } else {
-      currentWeatcherEle = (
-        <div className="container">
-          <div className="row">
-            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-              <p className="city-unavailable">City not found. Please try again.</p>
+      if (weatherData.cod === undefined) {
+        currentWeatcherEle = (
+          <div className="container">
+            <div className="row">
+              <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                <p className="city-unavailable"></p>
+              </div>
             </div>
           </div>
-        </div>
-      );
+        );
+      } else {
+        currentWeatcherEle = (
+          <div className="container">
+            <div className="row">
+              <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                <p className="city-unavailable">City not found. Please try again.</p>
+              </div>
+            </div>
+          </div>
+        );
+      }
     }
 
     return <div className="current-weather-wrapper">{currentWeatcherEle}</div>;

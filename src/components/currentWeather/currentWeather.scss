@@ -156,5 +156,9 @@
         }
       }
     }
+
+    @media (max-width: 767px) {
+      max-width: 100%;
+    }
   }
 }

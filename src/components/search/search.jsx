@@ -8,12 +8,37 @@ class Search extends Component {
     this.props.showLoader();
     e.preventDefault();
 
-    const tempFormat = this.props.tempFormat;
     const city = this.searchText.value;
-    const api = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=da7a1729e53b85f62484fe90209713db&units=" + tempFormat;
+    const tempFormat = this.props.tempFormat;
+    const apiURLopencagedata = "https://api.opencagedata.com/geocode/v1/json?no_annotations=1&key=" + process.env.REACT_APP_OPEN_CAGE_DATA_API_KEY + "&q=" + city;
 
-    axios.get(api, { validateStatus: false }).then(response => {
-      this.props.onSearchTextSubmit({ searchText: this.searchText.value, fetchedData: response.data });
+    axios.get(apiURLopencagedata, { validateStatus: false }).then(responseOpencagedata => {
+      if (responseOpencagedata.data.results.length > 0) {
+        // const latitude = response.data.results[0].geometry.lat;
+        // const longitude = response.data.results[0].geometry.lng;
+
+        let cityFound = false;
+
+        responseOpencagedata.data.results.forEach(value => {
+          if (cityFound === false) {
+            if (value.components.city !== undefined && value.components._type === "city") {
+              const apiURL = "https://api.openweathermap.org/data/2.5/weather?q=" + value.components.city + "&APPID=" + process.env.REACT_APP_OPEN_WEATHER_API_KEY + "&units=" + tempFormat;
+
+              axios.get(apiURL, { validateStatus: false }).then(response => {
+                this.props.onSearchTextSubmit({ searchText: response.data.name, fetchedData: response.data });
+
+                cityFound = true;
+              });
+            }
+          }
+        });
+
+        if (cityFound === false) {
+          this.props.onSearchTextSubmit({ searchText: city, fetchedData: { cod: "404" } });
+        }
+      } else {
+        this.props.onSearchTextSubmit({ searchText: city, fetchedData: { cod: "404" } });
+      }
     });
   };
 
