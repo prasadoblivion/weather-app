@@ -5,10 +5,12 @@ import "./search.scss";
 
 class Search extends Component {
   handleSearchFormSubmit = e => {
+    this.props.showLoader();
     e.preventDefault();
 
+    const tempFormat = this.props.tempFormat;
     const city = this.searchText.value;
-    const api = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=da7a1729e53b85f62484fe90209713db&units=metric";
+    const api = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=da7a1729e53b85f62484fe90209713db&units=" + tempFormat;
 
     axios.get(api, { validateStatus: false }).then(response => {
       this.props.onSearchTextSubmit({ searchText: this.searchText.value, fetchedData: response.data });
@@ -44,12 +46,24 @@ class Search extends Component {
   }
 }
 
+const mapStateToProps = state => {
+  return {
+    tempFormat: state.weatherDataReducer[0].tempFormat
+  };
+};
+
 const mapDispatchToProps = dispatch => {
   return {
     onSearchTextSubmit: searchText => {
       dispatch({ type: "SEARCH_TEXT_CHANGED", payload: searchText });
+    },
+    showLoader: () => {
+      dispatch({ type: "SHOW_LOADER" });
+    },
+    hideLoader: () => {
+      dispatch({ type: "HIDE_LOADER" });
     }
   };
 };
 
-export default connect(null, mapDispatchToProps)(Search);
+export default connect(mapStateToProps, mapDispatchToProps)(Search);

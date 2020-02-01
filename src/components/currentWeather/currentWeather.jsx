@@ -4,17 +4,53 @@ import axios from "axios";
 import "./currentWeather.scss";
 
 class CurrentWeather extends Component {
+  geoFindLocation(tempFormat, api) {
+    const success = position => {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+
+      const api = "https://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longitude + "&APPID=da7a1729e53b85f62484fe90209713db&units=" + tempFormat;
+
+      axios.get(api, { validateStatus: false }).then(response => {
+        this.props.onCurrentWeatherFetched(response.data);
+      });
+    };
+
+    const error = () => {
+      //failed to get location
+      axios.get(api, { validateStatus: false }).then(response => {
+        this.props.onCurrentWeatherFetched(response.data);
+      });
+    };
+
+    if (!navigator.geolocation) {
+      //geolocation not supported
+      axios.get(api, { validateStatus: false }).then(response => {
+        this.props.onCurrentWeatherFetched(response.data);
+      });
+    } else {
+      navigator.geolocation.getCurrentPosition(success, error);
+    }
+  }
+
   componentDidMount() {
+    this.props.showLoader();
+    const tempFormat = this.props.tempFormat;
     const city = this.props.city;
-    const api = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=da7a1729e53b85f62484fe90209713db&units=metric";
-    axios.get(api, { validateStatus: false }).then(response => {
-      this.props.onCurrentWeatherFetched(response.data);
-    });
+    const api = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=da7a1729e53b85f62484fe90209713db&units=" + tempFormat;
+
+    this.geoFindLocation(tempFormat, api);
+
+    // axios.get(api, { validateStatus: false }).then(response => {
+    //   this.props.onCurrentWeatherFetched(response.data);
+    // });
   }
 
   handleRefreshBtnClick = () => {
+    this.props.showLoader();
+    const tempFormat = this.props.tempFormat;
     const city = this.props.city;
-    const api = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=da7a1729e53b85f62484fe90209713db&units=metric";
+    const api = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=da7a1729e53b85f62484fe90209713db&units=" + tempFormat;
     axios.get(api, { validateStatus: false }).then(response => {
       this.props.onCurrentWeatherFetched(response.data);
     });
@@ -23,12 +59,31 @@ class CurrentWeather extends Component {
   fetchDataAtRegularInterals = timeInterval => {
     const minToMilliSec = timeInterval * 60 * 1000;
     setTimeout(() => {
+      this.props.showLoader();
+      const tempFormat = this.props.tempFormat;
       const city = this.props.city;
-      const api = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=da7a1729e53b85f62484fe90209713db&units=metric";
+      const api = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=da7a1729e53b85f62484fe90209713db&units=" + tempFormat;
       axios.get(api, { validateStatus: false }).then(response => {
         this.props.onCurrentWeatherFetched(response.data);
       });
     }, minToMilliSec);
+  };
+
+  getTime = (tType, inptDateUnix) => {
+    const hour = new Date(inptDateUnix * 1000).getHours();
+    const minute = new Date(inptDateUnix * 1000).getMinutes();
+    const seconds = new Date(inptDateUnix * 1000).getSeconds();
+
+    if (tType === "hour") {
+      return hour;
+    } else if (tType === "minute") {
+      return minute;
+    } else if (tType === "seconds") {
+      return seconds;
+    } else if (tType === "fullTime") {
+      const fullTime = hour + ":" + minute + ":" + seconds;
+      return fullTime;
+    }
   };
 
   render() {
@@ -49,6 +104,7 @@ class CurrentWeather extends Component {
     let windDirection = null;
     let sunrise = null;
     let sunset = null;
+    let tempFormat = null;
 
     const weatherData = { ...this.props.currentWeatherData };
 
@@ -71,6 +127,7 @@ class CurrentWeather extends Component {
       windDirection = weatherData.wind.deg;
       sunrise = new Date(weatherData.sys.sunrise * 1000).toLocaleTimeString();
       sunset = new Date(weatherData.sys.sunset * 1000).toLocaleTimeString();
+      tempFormat = this.props.tempFormat === "metric" ? "C" : "F";
     } else if (weatherData.cod !== undefined && weatherData.cod === "404") {
       cityavailable = false;
     }
@@ -94,7 +151,7 @@ class CurrentWeather extends Component {
                 <div className="col temp-text">
                   <div>
                     {weatherTemp}
-                    <sup>o</sup> C
+                    <sup>o</sup> {tempFormat}
                   </div>
                 </div>
               </div>
@@ -104,13 +161,13 @@ class CurrentWeather extends Component {
                   <span className="weather-other-details">
                     <span className="weather-other-details-text">Min.</span>
                     {weatherMinTemp}
-                    <sup>o</sup> C
+                    <sup>o</sup> {tempFormat}
                   </span>
 
                   <span className="weather-other-details">
                     <span className="weather-other-details-text">Max.</span>
                     {weatherMaxTemp}
-                    <sup>o</sup> C
+                    <sup>o</sup> {tempFormat}
                   </span>
                 </div>
 
@@ -134,10 +191,10 @@ class CurrentWeather extends Component {
                     <i className="wi wi-strong-wind" aria-label="wind" title="wind"></i> {windSpeed} km/h &nbsp;<i className="wi wi-direction-left" aria-label={"wind direction " + windDirection + " degrees"} title={"wind direction " + windDirection + " degrees"} style={{ transform: "rotate(" + windDirection + "deg)", fontSize: "1.5rem" }}></i>
                   </li>
                   <li className="list-group-item">
-                    <i className="wi wi-sunrise" aria-label="Sunrise" title="Sunrise"></i> {sunrise}
+                    <i className="wi wi-sunrise" aria-label="Sunrise" title="Sunrise"></i> {sunrise} <small>(Local)</small>
                   </li>
                   <li className="list-group-item">
-                    <i className="wi wi-sunset" aria-label="Sunset" title="Sunset"></i> {sunset}
+                    <i className="wi wi-sunset" aria-label="Sunset" title="Sunset"></i> {sunset} <small>(Local)</small>
                   </li>
                 </ul>
               </div>
@@ -173,7 +230,8 @@ class CurrentWeather extends Component {
 const mapStateToProps = state => {
   return {
     city: state.weatherDataReducer[0].city,
-    currentWeatherData: state.weatherDataReducer[0].weatherData
+    currentWeatherData: state.weatherDataReducer[0].weatherData,
+    tempFormat: state.weatherDataReducer[0].tempFormat
   };
 };
 
@@ -181,6 +239,12 @@ const mapDispatchToProps = dispatch => {
   return {
     onCurrentWeatherFetched: inputData => {
       dispatch({ type: "CURRENT_WEATHER_DATA_FETCHED", payload: inputData });
+    },
+    showLoader: () => {
+      dispatch({ type: "SHOW_LOADER" });
+    },
+    hideLoader: () => {
+      dispatch({ type: "HIDE_LOADER" });
     }
   };
 };
