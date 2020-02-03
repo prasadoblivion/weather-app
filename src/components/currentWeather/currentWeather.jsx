@@ -9,7 +9,7 @@ class CurrentWeather extends Component {
       const latitude = position.coords.latitude;
       const longitude = position.coords.longitude;
 
-      const apiURL = "https://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longitude + "&APPID=da7a1729e53b85f62484fe90209713db&units=" + tempFormat;
+      const apiURL = encodeURI("https://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longitude + "&APPID=da7a1729e53b85f62484fe90209713db&units=" + tempFormat);
 
       axios.get(apiURL, { validateStatus: false }).then(response => {
         this.props.onCurrentWeatherFetched(response.data);
@@ -19,17 +19,18 @@ class CurrentWeather extends Component {
     const error = () => {
       //failed to get location using geolocation api
       //then fetch location using IP
+      //backup: https://freegeoip.app/json/
 
-      axios.get("http://ip-api.com/json", { validateStatus: false }).then(
+      axios.get("https://ipapi.co/json/", { validateStatus: false }).then(
         response => {
-          const apiURL = "https://api.openweathermap.org/data/2.5/weather?lat=" + response.data.lat + "&lon=" + response.data.lon + "&APPID=da7a1729e53b85f62484fe90209713db&units=" + tempFormat;
+          const apiURL = encodeURI("https://api.openweathermap.org/data/2.5/weather?lat=" + response.data.latitude + "&lon=" + response.data.longitude + "&APPID=da7a1729e53b85f62484fe90209713db&units=" + tempFormat);
 
           axios.get(apiURL, { validateStatus: false }).then(response => {
             this.props.onCurrentWeatherFetched(response.data);
           });
         },
         () => {
-          const apiURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=da7a1729e53b85f62484fe90209713db&units=" + tempFormat;
+          const apiURL = encodeURI("https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=da7a1729e53b85f62484fe90209713db&units=" + tempFormat);
 
           axios.get(apiURL, { validateStatus: false }).then(response => {
             this.props.onCurrentWeatherFetched(response.data);
@@ -44,14 +45,14 @@ class CurrentWeather extends Component {
 
       axios.get("http://ip-api.com/json", { validateStatus: false }).then(
         response => {
-          const apiURL = "https://api.openweathermap.org/data/2.5/weather?lat=" + response.data.lat + "&lon=" + response.data.lon + "&APPID=da7a1729e53b85f62484fe90209713db&units=" + tempFormat;
+          const apiURL = encodeURI("https://api.openweathermap.org/data/2.5/weather?lat=" + response.data.lat + "&lon=" + response.data.lon + "&APPID=da7a1729e53b85f62484fe90209713db&units=" + tempFormat);
 
           axios.get(apiURL, { validateStatus: false }).then(response => {
             this.props.onCurrentWeatherFetched(response.data);
           });
         },
         () => {
-          const apiURL = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=" + process.env.REACT_APP_OPEN_WEATHER_API_KEY + "&units=" + tempFormat;
+          const apiURL = encodeURI("https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=" + process.env.REACT_APP_OPEN_WEATHER_API_KEY + "&units=" + tempFormat);
 
           axios.get(apiURL, { validateStatus: false }).then(response => {
             this.props.onCurrentWeatherFetched(response.data);
@@ -76,7 +77,7 @@ class CurrentWeather extends Component {
     this.props.showLoader();
     const tempFormat = this.props.tempFormat;
     const city = this.props.city;
-    const api = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=" + process.env.REACT_APP_OPEN_WEATHER_API_KEY + "&units=" + tempFormat;
+    const api = encodeURI("https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=" + process.env.REACT_APP_OPEN_WEATHER_API_KEY + "&units=" + tempFormat);
     axios.get(api, { validateStatus: false }).then(response => {
       this.props.onCurrentWeatherFetched(response.data);
     });
@@ -88,7 +89,7 @@ class CurrentWeather extends Component {
       this.props.showLoader();
       const tempFormat = this.props.tempFormat;
       const city = this.props.city;
-      const api = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=" + process.env.REACT_APP_OPEN_WEATHER_API_KEY + "&units=" + tempFormat;
+      const api = encodeURI("https://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=" + process.env.REACT_APP_OPEN_WEATHER_API_KEY + "&units=" + tempFormat);
       axios.get(api, { validateStatus: false }).then(response => {
         this.props.onCurrentWeatherFetched(response.data);
       });
@@ -131,6 +132,7 @@ class CurrentWeather extends Component {
     let sunrise = null;
     let sunset = null;
     let tempFormat = null;
+    let windSpeetFormat = null;
 
     const weatherData = { ...this.props.currentWeatherData };
 
@@ -154,6 +156,7 @@ class CurrentWeather extends Component {
       sunrise = new Date(weatherData.sys.sunrise * 1000).toLocaleTimeString();
       sunset = new Date(weatherData.sys.sunset * 1000).toLocaleTimeString();
       tempFormat = this.props.tempFormat === "metric" ? "C" : "F";
+      windSpeetFormat = this.props.tempFormat === "metric" ? "meter/sec" : "miles/hour";
     } else if (weatherData.cod !== undefined && weatherData.cod === "404") {
       cityavailable = false;
     }
@@ -214,7 +217,7 @@ class CurrentWeather extends Component {
                     <i className="wi wi-humidity" aria-label="Humidity" title="Humidity"></i> {weatherHumidity}
                   </li>
                   <li className="list-group-item">
-                    <i className="wi wi-strong-wind" aria-label="wind" title="wind"></i> {windSpeed} km/h &nbsp;<i className="wi wi-direction-left" aria-label={"wind direction " + windDirection + " degrees"} title={"wind direction " + windDirection + " degrees"} style={{ transform: "rotate(" + windDirection + "deg)", fontSize: "1.5rem" }}></i>
+                    <i className="wi wi-strong-wind" aria-label="wind" title="wind"></i> {windSpeed} {windSpeetFormat} &nbsp;<i className="wi wi-direction-left" aria-label={"wind direction " + windDirection + " degrees"} title={"wind direction " + windDirection + " degrees"} style={{ transform: "rotate(" + windDirection + "deg)", fontSize: "1.5rem" }}></i>
                   </li>
                   <li className="list-group-item">
                     <i className="wi wi-sunrise" aria-label="Sunrise" title="Sunrise"></i> {sunrise} <small>(Local)</small>

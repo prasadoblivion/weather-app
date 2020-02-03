@@ -10,7 +10,7 @@ class Search extends Component {
 
     const city = this.searchText.value;
     const tempFormat = this.props.tempFormat;
-    const apiURLopencagedata = "https://api.opencagedata.com/geocode/v1/json?no_annotations=1&key=" + process.env.REACT_APP_OPEN_CAGE_DATA_API_KEY + "&q=" + city;
+    const apiURLopencagedata = encodeURI("https://api.opencagedata.com/geocode/v1/json?key=" + process.env.REACT_APP_OPEN_CAGE_DATA_API_KEY + "&q=" + city + "&no_annotations=1");
 
     axios.get(apiURLopencagedata, { validateStatus: false }).then(responseOpencagedata => {
       if (responseOpencagedata.data.results.length > 0) {
@@ -21,14 +21,34 @@ class Search extends Component {
 
         responseOpencagedata.data.results.forEach(value => {
           if (cityFound === false) {
-            if (value.components.city !== undefined && value.components._type === "city") {
-              const apiURL = "https://api.openweathermap.org/data/2.5/weather?q=" + value.components.city + "&APPID=" + process.env.REACT_APP_OPEN_WEATHER_API_KEY + "&units=" + tempFormat;
+            if ((value.components.city !== undefined || value.components.town !== undefined || value.components.state_district !== undefined || value.components.state !== undefined || value.components.country !== undefined) && (value.components._type === "city" || value.components._type === "state_district" || value.components._type === "state" || value.components._type === "country")) {
+              let cityName = null;
+
+              if (value.components._type === "city") {
+                cityName = value.components.city;
+              } else if (value.components.town !== undefined) {
+                cityName = value.components.town;
+              } else if (value.components._type === "state_district") {
+                cityName = value.components.state_district;
+              } else if (value.components._type === "state") {
+                cityName = value.components.state;
+              } else if (value.components._type === "country") {
+                cityName = value.components.country;
+              }
+
+              // console.log(cityName);
+
+              // const apiURL = encodeURI("https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&APPID=" + process.env.REACT_APP_OPEN_WEATHER_API_KEY + "&units=" + tempFormat);
+
+              const latitude = value.geometry.lat;
+              const longitude = value.geometry.lng;
+
+              const apiURL = encodeURI("https://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longitude + "&APPID=da7a1729e53b85f62484fe90209713db&units=" + tempFormat);
 
               axios.get(apiURL, { validateStatus: false }).then(response => {
                 this.props.onSearchTextSubmit({ searchText: response.data.name, fetchedData: response.data });
-
-                cityFound = true;
               });
+              cityFound = true;
             }
           }
         });
